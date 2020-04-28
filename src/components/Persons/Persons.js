@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Person from './Person/Person';
 
+
 class Persons extends Component{
     // static getDerivedStateFromProps(props, state) {
     //     console.log('[Persons.js] getDerivedStateFromProps');
@@ -9,7 +10,11 @@ class Persons extends Component{
 
     shouldComponentUpdate(nextProps, nextState) {
         console.log('[Persons.js] shouldComponentUpdate');
-        return true;
+        if (nextProps.persons !== this.props.persons) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -17,9 +22,17 @@ class Persons extends Component{
         return null;
     }
 
+    componentDidUpdate() {
+        console.log('[Persons.js] componentDidUPdate')
+    }
+
+    componentWillUnmount() {
+        console.log('[Persons.js] componentWillUnmount');
+    }
+
 
     render() {
-        console.log('[Persons.js rendering...');
+        console.log('[Persons.js] rendering...');
         return this.props.persons.map((person, index) => {
             return (
                 <Person 
@@ -33,9 +46,6 @@ class Persons extends Component{
         });
     }
 
-    componentDidUpdate() {
-        console.log('[Persons.js] componentDidUPdate')
-    }
 
 }
 export default Persons;

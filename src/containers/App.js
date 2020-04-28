@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
+import classes from './App.module.css';
 import Persons from '../components/Persons/Persons'
 import Cockpit from '../components/Cockpit/Cockpit'
+import WithClass from '../hoc/WithClass';
+import AuthContext from '../context/auth-context'
 
 class App extends Component {
 
@@ -12,7 +14,9 @@ class App extends Component {
       {id: 3, name: "Victoria", age: 23}
     ],
     otherState: "some other value",
-    showPersons: false
+    showPersons: false,
+    showCockpit: true,
+    authenticated: false
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -32,8 +36,6 @@ class App extends Component {
   componentDidUpdate() {
     console.log('[App.js] componentDidUpdate');
   }
-
-
 
   deletePersonHandler = (index) => {
     const persons = [...this.state.persons];
@@ -58,6 +60,10 @@ class App extends Component {
 
   }
 
+  loginHandler = () => {
+    this.setState({authenticated: true});
+  }
+
 
 
   render() {
@@ -69,21 +75,30 @@ class App extends Component {
           persons={this.state.persons}
           clicked={this.deletePersonHandler}
           changed={this.nameChangedHandler}
+          isAuthenticated={this.state.authenticated}
         />
       );
     }
 
 
     return (
-      <div className="App">
-        <Cockpit
-          persons={this.state.persons}
-          showPersons={this.state.showPersons}
-          clicked={this.togglePersonsHandler}
-          title={this.props.title}
-        />
-        {persons}
-      </div>
+      <WithClass classes={classes.App}>
+        <button onClick={()=> {
+          this.setState({ showCockpit: false});
+        }}>          
+          Remove Cockpit
+        </button>
+        <AuthContext.Provider value={{authenticated: this.state.authenticated, login: this.loginHander}}>
+        {this.state.showCockpit ? (
+            <Cockpit
+            personsLength={this.state.persons.length}
+            showPersons={this.state.showPersons}
+            clicked={this.togglePersonsHandler}
+            title={this.props.title}
+            />) : null}
+          {persons}
+        </AuthContext.Provider>         
+      </WithClass>
 
     );
   }
